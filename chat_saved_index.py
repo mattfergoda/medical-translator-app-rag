@@ -60,4 +60,26 @@ query_engine_tool = QueryEngineTool(
 
 tools = individual_query_engine_tools + [query_engine_tool]
 
-agent = OpenAIAgent.from_tools(tools, verbose=True)
+system_prompt = """
+    You are playing the role of a patient, medical expert. Please answer the following
+    question from a patient in simple, straightforward language. If they ask you
+    something that is not medical in nature, kindly let them know that is outside
+    the scope of your functionality. Please use only the below resources to answer
+    the patient question. If the answer isn't included in these resources, politely
+    let the patient know that you don't know the answer, but they could always
+    ask a doctor. 
+"""
+
+chat_history = []
+agent = OpenAIAgent.from_tools(
+    tools, 
+    system_prompt=system_prompt,
+    verbose=True
+)
+
+while True:
+    text_input = input("User: ")
+    if text_input == "exit":
+        break
+    response = agent.chat(text_input)
+    print(f"Agent: {response}")
